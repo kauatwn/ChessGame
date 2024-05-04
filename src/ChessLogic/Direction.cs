@@ -20,14 +20,14 @@
             ColumnDelta = columnDelta;
         }
 
-        public static Direction operator +(Direction dir1, Direction dir2)
+        public static Direction operator +(Direction firstDirection, Direction secondDirection)
         {
-            return new Direction(dir1.RowDelta + dir2.RowDelta, dir2.ColumnDelta + dir2.ColumnDelta);
+            return new Direction(firstDirection.RowDelta + secondDirection.RowDelta, secondDirection.ColumnDelta + secondDirection.ColumnDelta);
         }
 
-        public static Direction operator *(int scalar, Direction dir)
+        public static Direction operator *(int scalar, Direction direction)
         {
-            return new Direction (scalar * dir.RowDelta, scalar * dir.ColumnDelta);
+            return new Direction (scalar * direction.RowDelta, scalar * direction.ColumnDelta);
         }
     }
 }
