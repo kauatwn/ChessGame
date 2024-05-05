@@ -30,5 +30,55 @@
 
             return copy;
         }
+
+        public override IEnumerable<Move> GetMoves(Position from, Board board)
+        {
+            return ForwardMoves(from, board).Concat(DiagonalMoves(from, board));
+        }
+
+        private static bool CanMoveTo(Position position, Board board)
+        {
+            return Board.IsInside(position) && board.IsEmpty(position);
+        }
+
+        private bool CanCaptureAt(Position position, Board board)
+        {
+            if (!Board.IsInside(position) || board.IsEmpty(position))
+            {
+                return false;
+            }
+
+            return board[position].Color != Color;
+        }
+
+        private IEnumerable<Move> ForwardMoves(Position from, Board board)
+        {
+            Position singleForwardPosition = from + Forward;
+
+            if (CanMoveTo(singleForwardPosition, board))
+            {
+                yield return new NormalMove(from, singleForwardPosition);
+
+                Position doubleForwardPosition = singleForwardPosition + Forward;
+
+                if (!HasMoved && CanMoveTo(doubleForwardPosition, board))
+                {
+                    yield return new NormalMove(from, doubleForwardPosition);
+                }
+            }
+        }
+
+        private IEnumerable<Move> DiagonalMoves(Position from, Board board)
+        {
+            foreach (Direction direction in new Direction[] { Direction.West, Direction.East })
+            {
+                Position to = from + Forward + direction;
+
+                if (CanCaptureAt(to, board))
+                {
+                    yield return new NormalMove(from, to);
+                }
+            }
+        }
     }
 }
