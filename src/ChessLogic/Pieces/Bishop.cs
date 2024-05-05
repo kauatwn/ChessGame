@@ -27,5 +27,10 @@
 
             return copy;
         }
+
+        public override IEnumerable<Move> GetMoves(Position from, Board board)
+        {
+            return FindPositionsInMultipleDirections(from, board, Directions).Select(to => new NormalMove(from, to));
+        }
     }
 }
