@@ -36,5 +36,15 @@ namespace ChessLogic
         {
             return directions.SelectMany(direction => FindPositionsInUniqueDirection(from, board, direction));
         }
+
+        public virtual bool CanCaptureOpponentKing(Position from, Board board)
+        {
+            return GetMoves(from, board).Any(move =>
+            {
+                Piece piece = board[move.ToPosition];
+
+                return piece != null && piece.Type == PieceType.King;
+            });
+        }
     }
 }
