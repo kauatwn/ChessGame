@@ -22,12 +22,12 @@
 
         public static Direction operator +(Direction firstDirection, Direction secondDirection)
         {
-            return new Direction(firstDirection.RowDelta + secondDirection.RowDelta, secondDirection.ColumnDelta + secondDirection.ColumnDelta);
+            return new Direction(firstDirection.RowDelta + secondDirection.RowDelta, firstDirection.ColumnDelta + secondDirection.ColumnDelta);
         }
 
         public static Direction operator *(int scalar, Direction direction)
         {
-            return new Direction (scalar * direction.RowDelta, scalar * direction.ColumnDelta);
+            return new Direction(scalar * direction.RowDelta, scalar * direction.ColumnDelta);
         }
     }
 }
