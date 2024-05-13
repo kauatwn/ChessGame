@@ -47,7 +47,7 @@
             return moveCandidates.Where(move => move.IsLegal(Board));
         }
 
-        public bool IsGameOVer()
+        public bool IsGameOver()
         {
             return Result != null;
         }

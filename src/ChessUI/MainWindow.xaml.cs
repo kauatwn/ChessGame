@@ -21,7 +21,7 @@ namespace ChessUI
         private Rectangle[,] Highlights { get; } = new Rectangle[8, 8];
         private Dictionary<Position, Move> MoveCache { get; } = [];
 
-        private GameState GameState { get; }
+        private GameState GameState { get; set; }
         private Position SelectedPosition { get; set; } = null;
 
         public MainWindow()
@@ -67,8 +67,12 @@ namespace ChessUI
 
         private void BoardGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Point point = e.GetPosition(BoardGrid);
+            if (IsMenuOnScreen())
+            {
+                return;
+            }
 
+            Point point = e.GetPosition(BoardGrid);
             Position position = ToSquarePosition(point);
 
             if (SelectedPosition == null)
@@ -124,6 +128,11 @@ namespace ChessUI
             DrawBoard(GameState.Board);
 
             SetCursor(GameState.CurrentPlayer);
+
+            if (GameState.IsGameOver())
+            {
+                ShowGameOver();
+            }
         }
 
         private void CacheMoves(IEnumerable<Move> moves)
@@ -164,6 +173,42 @@ namespace ChessUI
             {
                 Cursor = ChessCursors.BlackCursor;
             }
+        }
+
+        private bool IsMenuOnScreen()
+        {
+            return MenuContainer.Content != null;
+        }
+
+        private void ShowGameOver()
+        {
+            var gameOverMenu = new GameOverMenu(GameState);
+            MenuContainer.Content = gameOverMenu;
+
+            gameOverMenu.OptionSelected += option =>
+            {
+                if (option == Option.Restart)
+                {
+                    MenuContainer.Content = null;
+
+                    RestartGame();
+                }
+                else
+                {
+                    Application.Current.Shutdown();
+                }
+            };
+        }
+
+        private void RestartGame()
+        {
+            HideHighlights();
+            MoveCache.Clear();
+
+            GameState = new GameState(Board.Initial(), Player.White);
+            DrawBoard(GameState.Board);
+
+            SetCursor(GameState.CurrentPlayer);
         }
     }
 }
