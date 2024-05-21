@@ -4,6 +4,12 @@
     {
         private Piece[,] Pieces { get; } = new Piece[8, 8];
 
+        private Dictionary<Player, Position> PawnSkipPositions { get; } = new()
+        {
+            { Player.White, null },
+            { Player.Black, null }
+        };
+
         public Piece this[int row, int column]
         {
             get { return Pieces[row, column]; }
@@ -14,6 +20,16 @@
         {
             get { return this[position.Row, position.Column]; }
             set { this[position.Row, position.Column] = value; }
+        }
+
+        public Position GetPawnSkipPosition(Player player)
+        {
+            return PawnSkipPositions[player];
+        }
+
+        public void SetPawnSkipPosition(Player player, Position position)
+        {
+            PawnSkipPositions[player] = position;
         }
 
         public static Board Initial()
