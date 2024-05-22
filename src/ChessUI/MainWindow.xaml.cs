@@ -227,6 +227,8 @@ namespace ChessUI
 
         private void RestartGame()
         {
+            SelectedPosition = null;
+
             HideHighlights();
             MoveCache.Clear();
 
@@ -234,6 +236,30 @@ namespace ChessUI
             DrawBoard(GameState.Board);
 
             SetCursor(GameState.CurrentPlayer);
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(!IsMenuOnScreen() && e.Key == Key.Escape)
+            {
+                ShowPauseMenu();
+            }
+        }
+
+        private void ShowPauseMenu()
+        {
+            var pauseMenu = new PauseMenu();
+            MenuContainer.Content = pauseMenu;
+
+            pauseMenu.OptionSelected += option =>
+            {
+                MenuContainer.Content = null;
+
+                if (option == Option.Restart)
+                {
+                    RestartGame();
+                }
+            };
         }
     }
 }
