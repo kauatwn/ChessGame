@@ -78,7 +78,7 @@
             return this[position] == null;
         }
 
-        public IEnumerable<Position> PiecePosition()
+        public IEnumerable<Position> PiecePositions()
         {
             for (int row = 0; row < 8; row++)
             {
@@ -92,11 +92,11 @@
                     }
                 }
             }
-        } 
+        }
 
         public IEnumerable<Position> PiecePositionsFor(Player player)
         {
-            return PiecePosition().Where(position => this[position].Color == player);
+            return PiecePositions().Where(position => this[position].Color == player);
         }
 
         public bool IsInCheck(Player player)
@@ -113,12 +113,71 @@
         {
             var copy = new Board();
 
-            foreach (Position position in PiecePosition())
+            foreach (Position position in PiecePositions())
             {
                 copy[position] = this[position].Copy();
             }
 
             return copy;
+        }
+
+        public Counting CountPieces()
+        {
+            var couting = new Counting();
+
+            foreach (Position position in PiecePositions())
+            {
+                var piece = this[position];
+
+                couting.Increment(piece.Color, piece.Type);
+            }
+
+            return couting;
+        }
+
+        public bool InsufficientMaterial()
+        {
+            var counting = new Counting();
+
+            return IsKingVersusKing(counting) || IsKingAndBishopVersusKing(counting) || IsKingAndKnightVersusKing(counting) || IsKingAndBishopVersusKingAndBishop(counting);
+        }
+
+        private static bool IsKingVersusKing(Counting counting)
+        {
+            return counting.TotalCount == 2;
+        }
+
+        private static bool IsKingAndBishopVersusKing(Counting counting)
+        {
+            return counting.TotalCount == 3 && (counting.White(PieceType.Bishop) == 1 || counting.Black(PieceType.Bishop) == 1);
+        }
+
+        private static bool IsKingAndKnightVersusKing(Counting counting)
+        {
+            return counting.TotalCount == 3 && (counting.White(PieceType.Knight) == 1 || counting.Black(PieceType.Knight) == 1);
+        }
+
+        private bool IsKingAndBishopVersusKingAndBishop(Counting counting)
+        {
+            if (counting.TotalCount != 4)
+            {
+                return false;
+            }
+
+            if (counting.White(PieceType.Bishop) != 1 || counting.Black(PieceType.Bishop) != 1)
+            {
+                return false;
+            }
+
+            Position whiteBishopPosition = FindPiece(Player.White, PieceType.Bishop);
+            Position blackBishopPosition = FindPiece(Player.Black, PieceType.Bishop);
+
+            return whiteBishopPosition.SquareColor() == blackBishopPosition.SquareColor();
+        }
+
+        private Position FindPiece(Player color, PieceType type)
+        {
+            return PiecePositionsFor(color).First(position => this[position].Type == type);
         }
     }
 }
