@@ -6,6 +6,8 @@
         public Player CurrentPlayer { get; private set; }
         public Result Result { get; private set; } = null;
 
+        private int NoCaptureOrPawnMoves { get; set; } = 0;
+
         public GameState(Board board, Player player)
         {
             Board = board;
@@ -30,7 +32,16 @@
         {
             Board.SetPawnSkipPosition(CurrentPlayer, null);
 
-            move.Execute(Board);
+            bool captureOrPawn = move.Execute(Board);
+
+            if (captureOrPawn)
+            {
+                NoCaptureOrPawnMoves = 0;
+            }
+            else
+            {
+                NoCaptureOrPawnMoves++;
+            }
 
             CurrentPlayer = CurrentPlayer.Opponent();
 
@@ -71,6 +82,17 @@
             {
                 Result = Result.Draw(EndReason.InsufficientMaterial);
             }
+            else if (FiftyMoveRule())
+            {
+                Result = Result.Draw(EndReason.FiftyMoveRule);
+            }
+        }
+
+        private bool FiftyMoveRule()
+        {
+            int fullMoves = NoCaptureOrPawnMoves / 2;
+
+            return fullMoves == 50;
         }
     }
 }
