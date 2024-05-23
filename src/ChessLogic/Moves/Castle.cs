@@ -37,10 +37,12 @@
             }
         }
 
-        public override void Execute(Board board)
+        public override bool Execute(Board board)
         {
             new NormalMove(FromPosition, ToPosition).Execute(board);
             new NormalMove(RookFromPosition, RookToPosition).Execute(board);
+
+            return false;
         }
 
         public override bool IsLegal(Board board)

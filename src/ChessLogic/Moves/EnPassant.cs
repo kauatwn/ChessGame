@@ -15,10 +15,12 @@
             CapturePosition = new Position(from.Row, to.Column);
         }
 
-        public override void Execute(Board board)
+        public override bool Execute(Board board)
         {
             new NormalMove(FromPosition, ToPosition).Execute(board);
             board[CapturePosition] = null;
+
+            return true;
         }
     }
 }

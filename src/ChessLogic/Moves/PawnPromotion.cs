@@ -15,7 +15,7 @@
             NewType = newType;
         }
 
-        public override void Execute(Board board)
+        public override bool Execute(Board board)
         {
             Piece pawn = board[FromPosition];
             board[FromPosition] = null;
@@ -24,6 +24,8 @@
             promotionPiece.HasMoved = true;
 
             board[ToPosition] = promotionPiece;
+
+            return true;
         }
 
         private Piece CreatePromotionPiece(Player color)
